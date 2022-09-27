@@ -1,36 +1,39 @@
 package com.company;
 
-public class Main {
+public class Main extends Thread{
+    String threadName;
+    public int meters = 0;
+    boolean isActive = true;
 
-    public static void main(String[] args) {
-        AnimalThread th1 = new AnimalThread("Черепашка");
-        AnimalThread th2 = new AnimalThread("Зайцонок");
-        th1.start();
-        th2.start();
+    public Main(String threadName){
+        this.threadName = threadName;
+
     }
-}
 
-    class AnimalThread extends Thread {
-
-        AnimalThread(String name) {
-            super(name);
-        }
-
-        public void run() {
-
+    @Override
+    public void run() {
+        while(isActive) {
+            System.out.println(threadName + " "+ meters + "м");
+            meters += 100;
+            if (meters > 1000) {
+                isActive=false;
+            }
             try {
-                for (int i = 0; i < 1100; i = i + 100) {
-                    System.out.println(Thread.currentThread().getName() + ": " + i + " метров");
-                    if (Thread.currentThread().getName().equalsIgnoreCase("Черепашка") && i == 0) {
-                        Thread.sleep(1000);
-                    }
-                    if (Thread.currentThread().getName().equalsIgnoreCase("Зайцонок") && i == 600) {
-                        Thread.sleep(1000);
-                    }
-                }
-            } catch (InterruptedException e) {
-                throw new RuntimeException(e);
+                Thread.sleep(1000);
+            } catch (InterruptedException ex) {
+                ex.getMessage();
             }
         }
-
     }
+    public static void main(String[] args) {
+        Main krolik = new Main("Кролик");
+        Main cherepaha = new Main("Черепаха");
+        krolik.start();
+        cherepaha.start();
+        while(krolik.isAlive()&cherepaha.isAlive()) {
+            if (krolik.meters > 500) {
+                cherepaha.setPriority(10);
+            }
+        }
+    }
+}
